@@ -20,106 +20,102 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+int mult=0,flag=1;
+
 typedef struct node{
-	char ch;
-	long int figur;
+	long int num;
 	struct node *next;
 } node;
 
-char *readnum(char *p,long int *a)
+long int scan(char **p)									//读取数据，并且可以忽略多余的空格，并将p的位置定位至下一个操作符 
 {
-	long int result=0;
-	while (*p>='1'&&*p<='9'){
-		result=result*10+*p-'0';
-		p++;
+	char *ps=*p;
+	long int sum=0;
+	while (*ps==' '||(*ps>='0'&&*ps<='9')){
+		if (*ps==' ') ps++;
+		else {
+			int digit=*ps-'0';
+			sum=sum*10+digit;
+		}
 	}
-	*a=result;
-	return p;
+	*p=ps;
+	sum*=flag;
+	if (flag==-1) flag*=-1;
+	return sum;
 }
 
-void push_ch(node *list,char *p){
-	node *temp=NULL;
-	temp=(node *)malloc(sizeof(node));
-	temp->ch=*p;
-	temp->next=list->next;
-	list->next=temp;
-}
-
-void push_num(node *list,long int x){
-	node *temp=NULL;
-	temp=(node *)malloc(sizeof(node));
-	temp->figur=x;
-	temp->next=list->next;
-	list->next=temp;
-}
-
-char pop_ch(node *list)
+void push(node *head,long int x)
 {
-	node *dele,*prev;
-	dele=list->next;
-	prev=list->next;
-	char result=dele->ch;
-	list->next=prev;
-	free(dele);
+	node *prev=head->next,*temp=NULL;
+	temp=(node *)malloc(sizeof(node));
+	temp->num=x;
+	head->next=temp;
+	temp->next=prev;
+}
+
+void multi(long int x,node *head)
+{
+	node *temp=head->next;
+	if (mult==1) temp->num*=x;
+	else temp->num/=x;
+}
+
+long int pop(node *head)
+{
+	node *del=head->next,*prev=del->next;
+	long int result=del->num;
+	head->next=prev;
+	free(del);
 	return result;
 }
 
-long int pop_num(node *list)
-{
-	node *dele,*prev;
-	dele=list->next;
-	prev=list->next;
-	long int result=dele->figur;
-	list->next=prev;
-	free(dele);
-	return result;
-}
 
 int main(void)
 {
-	char s[114514];
+	char s[100010];
 	gets(s);
 	char *p=s;
-	int first=1;
-	node *figure=NULL;
-	node *add=NULL;
-	figure=(node *)malloc(sizeof(node));
-	add=(node *)malloc(sizeof(node));
+	node *head=NULL;
+	head=(node *)malloc(sizeof(node));
+	head->next=NULL;
 	while (*p!='\0'){
-		if (first==1&&*p>='1'&&*p<='9'){
-			first=0;
-			push_ch(add,p++);
+		if (*p==' ')p++;
+		else if (*p=='*'){
+			mult=1;
+			p++;
+		} 
+		else if (*p=='/'){
+			mult=-1;
+			p++;
 		}
-		else first=0;
-		if (*p==' ') p++;
-		else if (*p=='+'||*p=='-') push_ch(add,p++);
-		else if (*p>='1'&&*p<='9'){
-			long int a,b;
-			p=readnum(p,&a);
-			while (*p=='*'||*p=='/'){
-				if (*p=='*'){
-					p++;
-					p=readnum(p,&b);
-					a*=b;
-				}
-				else {
-					p++;
-					p=readnum(p,&b);
-					a/=b;
-				}
+		else if(*p=='+'){
+			mult=0;
+			p++;
+		}
+		else if (*p=='-'){
+			flag=-1;
+			mult=0;
+			p++;
+		}
+		else {
+			long int num=scan(&p);
+			if (mult==0){
+				push(head,num);
 			}
-			push_num(figure,a);
+			else {
+				multi(num,head);
+			}
 		}
 	}
-	long int sum=0;
-	while (figure->next!=NULL){
-		char x=pop_ch(add);
-		if (x=='+') sum+=pop_num(figure);
-		else sum-=pop_num(figure);
+	long int result=0;
+	while (head->next=NULL){
+		result+=pop(head);
 	}
-	printf("%ld",sum);
+	printf("%ld",result);
 	return 0;
 }
+
+
 
 
 
