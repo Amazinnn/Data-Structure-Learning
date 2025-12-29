@@ -60,8 +60,8 @@ void prnPostOrder(int inStart,int preStart,int length)
 
 int main(void)
 {
-	gets(inorder);
-	gets(preorder);
+	scanf("%s",inorder);
+	scanf("%s",preorder);
 	int len=strlen(inorder);
 	prnPostOrder(0,0,len);								//第三个参数输入的是序列总长度，而非坐标，故 “len-1”有误！ 
 	return 0;
