@@ -30,6 +30,41 @@
 
 数据保证，$1\leq N\leq 1000000$。
 */
+
+
+
+#include <stdio.h>
+int dp[1000010]={0,1,2,5};
+long int n;
+
+int F(long int x)
+{
+	if (x==0) return 0;
+	else if (dp[x]) return dp[x];
+	else {
+		dp[x]=(2*F(x-1)+F(x-3))%10000;
+		return dp[x];
+	}
+}
+
+int main(void)
+{
+	scanf("%ld",&n);
+	F(n);
+	printf("%d",dp[n]%10000);
+	return 0;
+}
+
+
+
+
+
+
+
+
+
+/*
+初版 
 #include <stdio.h>
 #include <math.h>
 #define Max(a,b) ((a>=b)?(a):(b))
@@ -43,7 +78,7 @@ void search(int up,int down)
 		count++;
 		count%=10000;
 	}
-	else if (up>n||down>n /*||(up==n&&down==n-1)||(up==n-1&&down==n)*/) ;
+	else if (up>n||down>n) ;
 	else {
 		if (up-down>=2) search(up,down+2);
 		else if (down-up>=2) search(up+2,down);
@@ -57,7 +92,7 @@ void search(int up,int down)
 		}
 		else {
 			search(up+1,down+1);
-			search(up+2,down);
+			//search(up+2,down);
 			search(up,down+2);
 			search(up+1,down+2);
 			search(up+2,down+1);
@@ -73,7 +108,7 @@ int main(void)
 	printf("%d",count);
 	return 0;
 }
-
+*/
 
 
 
